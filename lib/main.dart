@@ -1,8 +1,10 @@
 import 'package:eta_app/src/core/routing/router.dart';
 import 'package:eta_app/src/ui/theme/eta_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: '.env');
   runApp(const EtaApp());
 }
 
