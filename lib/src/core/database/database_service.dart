@@ -38,11 +38,7 @@ class DatabaseService {
     int page = 1,
     int limit = 10,
   }) async {
-    // Calculate the offset for paging
     final offset = (page - 1) * limit;
-    print(
-        "Fetching posts from page $page with limit $limit and offset $offset");
-    // Use the query method to get rows from the database
     final result = await _connection.execute(
       Sql.named(
           'SELECT * FROM posts ORDER BY created_at DESC LIMIT @limit OFFSET @offset'),
@@ -51,12 +47,8 @@ class DatabaseService {
         'offset': offset,
       },
     );
-    print(result.first);
-    // Convert the result rows to a list of maps
     return result.map((row) {
-      // Each row is a List of columns, so we map the post_id column
-      return Post.fromMap(
-          row.toColumnMap()); // Assumes the first column is post_id
+      return Post.fromMap(row.toColumnMap());
     }).toList();
   }
 
@@ -66,15 +58,18 @@ class DatabaseService {
     required int limit,
   }) async {
     final offset = (page - 1) * limit;
-    final query = '''
-      SELECT * FROM posts
-      WHERE is_tech = true AND is_posted = ${posted ? 'true' : 'false'}
-      ORDER BY created_at DESC
-      LIMIT $limit OFFSET $offset
-    ''';
-
-    final result = await _connection.execute(query);
-    return result.map((row) => Post.fromMap(row.toColumnMap())).toList();
+    final result = await _connection.execute(
+      Sql.named(
+          'SELECT * FROM posts WHERE is_tech = true AND is_posted = @posted ORDER BY created_at DESC LIMIT @limit OFFSET @offset'),
+      parameters: {
+        'posted': posted,
+        'limit': limit,
+        'offset': offset,
+      },
+    );
+    return result.map((row) {
+      return Post.fromMap(row.toColumnMap());
+    }).toList();
   }
 
   Future<void> close() async {

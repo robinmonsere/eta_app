@@ -87,38 +87,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
     await _fetchPosts(page: 1);
   }
 
-  Future<void> _fetchFilteredPosts(String filter) async {
-    setState(() {
-      _isLoading = true;
-      _posts.clear();
-      _filteredPosts.clear();
-      _currentPage = 1;
-      _hasMore = true;
-    });
-
-    await _dbService.connect();
-    List<Post> posts;
-
-    if (filter == "tech, posted") {
-      posts = await _dbService.fetchTechPosts(
-          posted: true, page: _currentPage, limit: 15);
-    } else if (filter == "tech, not posted") {
-      posts = await _dbService.fetchTechPosts(
-          posted: false, page: _currentPage, limit: 15);
-    } else {
-      posts = await _dbService.fetchPosts(page: _currentPage, limit: 15);
-    }
-
-    setState(() {
-      _isLoading = false;
-      _posts.addAll(posts);
-      _hasMore = posts.length == 15;
-    });
-
-    await _dbService.close();
-    _filterPosts("", filterOption: filter);
-  }
-
   void _filterPosts() {
     final query = _searchController.text;
     setState(() {
@@ -160,7 +128,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
           case "reposts":
             matchesFilter = post.type == 'repost';
             break;
-          // "tech, posted" and "tech, not posted" are handled separately
+          case "tech, posted":
+            matchesFilter = post.isTech == true && post.isPosted == true;
+            break;
+          case "tech, not posted":
+            matchesFilter = post.isTech == true && post.isPosted == false;
+            break;
           default:
             matchesFilter = true;
         }
@@ -186,12 +159,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
             ],
             selectedOption: _currentFilter,
             onOptionSelected: (option) {
-              if (option == "tech, posted" || option == "tech, not posted") {
-                //_fetchFilteredPosts(option);
-              } else {
-                _currentFilter = option;
-                _filterPosts();
-              }
+              _currentFilter = option;
+              _filterPosts();
             },
           ),
           const SizedBox(height: 10),
