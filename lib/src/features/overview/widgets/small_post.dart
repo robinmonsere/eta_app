@@ -1,5 +1,7 @@
 import 'package:eta_app/src/core/models/post.dart';
+import 'package:eta_app/src/features/details/details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SmallPost extends StatelessWidget {
   const SmallPost({
@@ -11,42 +13,21 @@ class SmallPost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Define a color for each post type
-    Color postColor;
-    switch (post.type) {
-      case 'reply':
-        postColor = Colors.purple;
-        break;
-      case 'quote':
-        postColor = Colors.yellow;
-        break;
-      case 'repost':
-        postColor = Colors.orange;
-        break;
-      default:
-        postColor = Colors.blue; // Default color for 'blue' or other types
-    }
-
-    // Determine the appropriate icon and color based on post.is_tech
-    Icon techIcon;
-    Color iconColor;
-    if (post.isTech ?? false) {
-      techIcon = Icon(Icons.check);
-      iconColor = Colors.green;
-    } else {
-      techIcon = Icon(Icons.close); // The "X" icon
-      iconColor = Colors.red;
-    }
-
     return ListTile(
+      onTap: () {
+        context.go(
+          DetailsScreen.route,
+          extra: post,
+        );
+      },
       title: Text(post.postId),
+      tileColor: Theme.of(context).colorScheme.secondaryContainer,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-            color: post.isTech ?? false ? Colors.green : Colors.red, width: 3),
-        borderRadius: BorderRadius.circular(5),
+            color: post.isTech ?? false ? Colors.green : Colors.red, width: 1),
+        borderRadius: BorderRadius.circular(10),
       ),
-      trailing:
-          Text(post.type ?? 'Unknown', style: TextStyle(color: postColor)),
+      trailing: Text(post.type ?? 'Unknown'),
     );
   }
 }

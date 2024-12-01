@@ -18,6 +18,22 @@ class DatabaseService {
     print('Connected to PostgreSQL');
   }
 
+  Future<void> updatePost({
+    required String postId,
+    required bool isTech,
+  }) async {
+    print('Updating post $postId with isTech=$isTech');
+    await _connection.execute(
+      Sql.named(
+        'UPDATE posts SET is_tech = @isTech WHERE post_id = @postId',
+      ),
+      parameters: {
+        'postId': postId,
+        'isTech': isTech,
+      },
+    );
+  }
+
   Future<List<Post>> fetchPosts({
     int page = 1,
     int limit = 10,
@@ -42,6 +58,23 @@ class DatabaseService {
       return Post.fromMap(
           row.toColumnMap()); // Assumes the first column is post_id
     }).toList();
+  }
+
+  Future<List<Post>> fetchTechPosts({
+    required bool posted,
+    required int page,
+    required int limit,
+  }) async {
+    final offset = (page - 1) * limit;
+    final query = '''
+      SELECT * FROM posts
+      WHERE is_tech = true AND is_posted = ${posted ? 'true' : 'false'}
+      ORDER BY created_at DESC
+      LIMIT $limit OFFSET $offset
+    ''';
+
+    final result = await _connection.execute(query);
+    return result.map((row) => Post.fromMap(row.toColumnMap())).toList();
   }
 
   Future<void> close() async {

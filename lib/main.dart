@@ -18,6 +18,7 @@ class EtaApp extends StatelessWidget {
       routerConfig: router,
       title: 'eta',
       theme: etaTheme,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

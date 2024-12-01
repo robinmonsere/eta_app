@@ -1,4 +1,6 @@
+import 'package:eta_app/src/core/models/post.dart';
 import 'package:eta_app/src/features/dashboard_screen.dart';
+import 'package:eta_app/src/features/details/details_screen.dart';
 import 'package:eta_app/src/features/logs/log_screen.dart';
 import 'package:eta_app/src/features/overview/overview_screen.dart';
 import 'package:eta_app/src/features/statistics_screen/statistics_screen.dart';
@@ -33,6 +35,17 @@ GoRouter router = GoRouter(
               const NoTransitionPage(
             child: LogScreen(),
           ),
+        ),
+        GoRoute(
+          path: DetailsScreen.route,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final post = state.extra as Post;
+            return NoTransitionPage(
+              child: DetailsScreen(
+                post: post,
+              ),
+            );
+          },
         )
       ],
     )

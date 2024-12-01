@@ -47,9 +47,7 @@ class Post {
       isHandled: map['is_handled'],
       isPosted: map['is_posted'],
       postedAt: map['posted_at'],
-      techPostedAt: map['tech_posted_at'] != null
-          ? DateTime.parse(map['tech_posted_at'])
-          : null,
+      techPostedAt: map['tech_posted_at'],
       type: map['type'],
       referenceId: map['reference_id'],
       referenceName: map['reference_name'],
