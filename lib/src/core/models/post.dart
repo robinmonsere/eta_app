@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class Post {
-  final String postId; // Non-nullable
+  final String postId;
   final List<String>? techWords;
   final int? version;
   final bool? isTech;
@@ -18,7 +18,7 @@ class Post {
   final String? techId;
 
   Post({
-    required this.postId, // Required field
+    required this.postId,
     this.techWords,
     this.version,
     this.isTech,
@@ -35,7 +35,6 @@ class Post {
     this.techId,
   });
 
-  // Factory method to create a Post from a Map (e.g., database row)
   factory Post.fromMap(Map<String, dynamic> map) {
     return Post(
       postId: map['post_id'], // Required field
@@ -58,7 +57,6 @@ class Post {
     );
   }
 
-  // Method to convert Post to a Map (e.g., for database insertion)
   Map<String, dynamic> toMap() {
     return {
       'post_id': postId, // Required field
@@ -79,9 +77,7 @@ class Post {
     };
   }
 
-  // Convert a Post to JSON (useful for APIs)
   String toJson() => json.encode(toMap());
 
-  // Create a Post from JSON
   factory Post.fromJson(String source) => Post.fromMap(json.decode(source));
 }

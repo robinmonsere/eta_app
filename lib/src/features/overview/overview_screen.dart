@@ -48,7 +48,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }) async {
     print('Fetching posts from page $page');
     if (_isLoading || !_hasMore) {
-      return; // Prevent multiple fetches or fetch when there's no more data
+      return;
+      // no more data
     }
     setState(() {
       _isLoading = true;
