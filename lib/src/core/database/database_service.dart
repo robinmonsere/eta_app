@@ -9,7 +9,7 @@ class DatabaseService {
     _connection = await Connection.open(
       Endpoint(
         host: dotenv.env['POSTGRES_HOST']!,
-        database: dotenv.env['STAGING_POSTGRES_DB']!,
+        database: dotenv.env['POSTGRES_DB']!,
         username: dotenv.env['POSTGRES_USER']!,
         password: dotenv.env['POSTGRES_PASSWORD']!,
       ),

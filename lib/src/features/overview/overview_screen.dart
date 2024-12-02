@@ -1,4 +1,5 @@
 import 'package:eta_app/src/core/database/database_service.dart';
+import 'package:eta_app/src/core/enums/filters.dart';
 import 'package:eta_app/src/core/models/post.dart';
 import 'package:eta_app/src/features/overview/widgets/post_filter.dart';
 import 'package:eta_app/src/features/overview/widgets/small_post.dart';
@@ -23,7 +24,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   int _currentPage = 1;
   bool _isLoading = false;
   bool _hasMore = true;
-  String _currentFilter = "all";
+  PostFilterOption _currentFilter = PostFilterOption.all;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
 
@@ -147,16 +148,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return Scaffold(
       body: Column(
         children: [
-          PostFilter(
-            options: const [
-              "all",
-              "tech, posted",
-              "tech, not posted",
-              "replies",
-              "quotes",
-              "posts",
-              "reposts",
-            ],
+          PostFilter<PostFilterOption>(
+            options: PostFilterOption.values,
             selectedOption: _currentFilter,
             onOptionSelected: (option) {
               _currentFilter = option;

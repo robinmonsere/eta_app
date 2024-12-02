@@ -1,9 +1,12 @@
+import 'package:eta_app/src/core/enums/filters.dart';
+import 'package:eta_app/src/ui/theme/border_radii.dart';
+import 'package:eta_app/src/ui/theme/padding_sizes.dart';
 import 'package:flutter/material.dart';
 
-class PostFilter extends StatefulWidget {
-  final List<String> options;
-  final Function(String) onOptionSelected;
-  final String? selectedOption;
+class PostFilter<T extends Enum> extends StatefulWidget {
+  final List<T> options;
+  final Function(T) onOptionSelected;
+  final T? selectedOption;
 
   const PostFilter({
     super.key,
@@ -13,11 +16,11 @@ class PostFilter extends StatefulWidget {
   });
 
   @override
-  State<PostFilter> createState() => _PostFilterState();
+  State<PostFilter<T>> createState() => _PostFilterState<T>();
 }
 
-class _PostFilterState extends State<PostFilter> {
-  String? _currentSelection;
+class _PostFilterState<T extends Enum> extends State<PostFilter<T>> {
+  T? _currentSelection;
 
   @override
   void initState() {
@@ -30,18 +33,19 @@ class _PostFilterState extends State<PostFilter> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox(
-      height: 50.0, // Adjust height as needed
+      height: 40,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: widget.options.length,
         itemBuilder: (BuildContext context, int index) {
           final option = widget.options[index];
           final isSelected = _currentSelection == option;
-
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            margin: const EdgeInsets.symmetric(
+              horizontal: PaddingSizes.extraSmall,
+            ),
             child: ChoiceChip(
-              label: Text(option),
+              label: Text((option as dynamic).getDisplayText()),
               selected: isSelected,
               onSelected: (bool selected) {
                 setState(() {
@@ -57,10 +61,14 @@ class _PostFilterState extends State<PostFilter> {
               ),
               selectedColor: colorScheme.primary,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
+                borderRadius: BorderRadius.circular(
+                  BorderRadii.xxl,
+                ),
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: PaddingSizes.large,
+                vertical: PaddingSizes.small,
+              ),
             ),
           );
         },
