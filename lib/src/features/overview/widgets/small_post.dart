@@ -13,6 +13,7 @@ class SmallPost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return ListTile(
       onTap: () {
         context.go(
@@ -21,10 +22,15 @@ class SmallPost extends StatelessWidget {
         );
       },
       title: Text(post.postId),
-      tileColor: Theme.of(context).colorScheme.secondaryContainer,
+      subtitle:
+          post.referenceName != null ? Text(post.referenceName ?? "") : null,
+      tileColor: colorScheme.secondaryContainer,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-            color: post.isTech ?? false ? Colors.green : Colors.red, width: 1),
+            color: post.isTech ?? false
+                ? colorScheme.secondary
+                : colorScheme.error,
+            width: 1),
         borderRadius: BorderRadius.circular(10),
       ),
       trailing: Text(post.type ?? 'Unknown'),

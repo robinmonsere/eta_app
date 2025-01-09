@@ -4,7 +4,6 @@ final etaTheme = ThemeData(
   brightness: Brightness.dark, // Dark mode only
   primaryColor: const Color(0xFF1a8cd8),
   scaffoldBackgroundColor: const Color(0xFF000000),
-
   colorScheme: const ColorScheme(
     brightness: Brightness.dark,
     primary: Color(0xFF1a8cd8),
@@ -18,7 +17,6 @@ final etaTheme = ThemeData(
     primaryContainer: Color(0xFF0D0F10),
     secondaryContainer: Color(0xFF202327),
   ),
-
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: const Color(0xFF202327),
@@ -36,7 +34,6 @@ final etaTheme = ThemeData(
     ),
     hintStyle: const TextStyle(color: Color(0xFFFFFFFF)),
   ),
-
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       shape: WidgetStateProperty.all<OutlinedBorder>(
@@ -62,6 +59,17 @@ final etaTheme = ThemeData(
           return Colors.white;
         },
       ),
+    ),
+  ),
+  textTheme: const TextTheme(
+    titleLarge: TextStyle(
+      fontSize: 26,
+      fontWeight: FontWeight.w900,
+      color: Color(0xFF1a8cd8),
+    ),
+    titleMedium: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
     ),
   ),
 );

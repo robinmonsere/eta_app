@@ -1,3 +1,5 @@
+import 'package:eta_app/src/ui/theme/border_radii.dart';
+import 'package:eta_app/src/ui/theme/padding_sizes.dart';
 import 'package:flutter/material.dart';
 
 class TextSearch extends StatelessWidget {
@@ -13,7 +15,9 @@ class TextSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(
+        PaddingSizes.small,
+      ),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
@@ -26,10 +30,14 @@ class TextSearch extends StatelessWidget {
             icon: const Icon(Icons.close),
           ),
           hintText: 'Search...',
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: PaddingSizes.medium,
+            horizontal: PaddingSizes.large,
+          ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(
+              BorderRadii.xxl,
+            ),
             borderSide: const BorderSide(
               color: Colors.blueAccent, // Slightly darker blue when focused
               width: 2,

@@ -2,6 +2,7 @@ import 'package:eta_app/src/core/database/database_service.dart';
 import 'package:eta_app/src/core/models/post.dart';
 import 'package:eta_app/src/core/routing/router.dart';
 import 'package:eta_app/src/features/overview/overview_screen.dart';
+import 'package:eta_app/src/ui/theme/padding_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -66,7 +67,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
           Image.network(
             "https://x-post-image-generation.vercel.app/api/generate?id=${widget.post.postId}",
           ),
-          const SizedBox(height: 16),
+          const SizedBox(
+            height: PaddingSizes.large,
+          ),
           CheckboxListTile(
             title: const Text('Tech post'),
             value: _isTech,
@@ -75,10 +78,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
           ),
           if (_isTech)
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(
+                PaddingSizes.small,
+              ),
               child: Text("Tech words: ${widget.post.techWords}"),
             ),
-          const SizedBox(height: 16),
+          const SizedBox(
+            height: PaddingSizes.large,
+          ),
           const Spacer(),
           ElevatedButton(
             onPressed: _hasChanges

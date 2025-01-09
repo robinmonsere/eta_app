@@ -4,7 +4,9 @@ import 'package:eta_app/src/core/models/post.dart';
 import 'package:eta_app/src/features/overview/widgets/post_filter.dart';
 import 'package:eta_app/src/features/overview/widgets/small_post.dart';
 import 'package:eta_app/src/features/overview/widgets/text_search.dart';
+import 'package:eta_app/src/ui/theme/padding_sizes.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class OverviewScreen extends StatefulWidget {
   const OverviewScreen({super.key});
@@ -21,6 +23,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   List<Post> _posts = [];
   List<Post> _filteredPosts = [];
 
+  String _searchId = "";
   int _currentPage = 1;
   bool _isLoading = false;
   bool _hasMore = true;
@@ -41,12 +44,33 @@ class _OverviewScreenState extends State<OverviewScreen> {
     super.dispose();
   }
 
+  /// Fetches a specific post and adds that post to the list of all posts
+  /// This does mean that in theory, you could have the same post in the list.
+  /// (fetch post by ID, and later fetch it by the paging system)
+  /// But in reality, that doesn't matter.
+  Future<void> _fetchPost(String id) async {
+    setState(() {
+      _isLoading = true;
+    });
+    await _dbService.connect();
+
+    final posts = await _dbService.fetchPost(id);
+
+    setState(() {
+      if (posts.isNotEmpty) {
+        _posts.addAll(posts);
+      }
+      _isLoading = false;
+    });
+    await _dbService.close();
+    _filterPosts();
+  }
+
   // Method to fetch posts from the database
   Future<void> _fetchPosts({
     int page = 1,
     int limit = 15,
   }) async {
-    print('Fetching posts from page $page');
     if (_isLoading || !_hasMore) {
       return;
       // no more data
@@ -79,6 +103,12 @@ class _OverviewScreenState extends State<OverviewScreen> {
     }
   }
 
+  void _searchForSpecificPost() {
+    if (_searchId.isNotEmpty) {
+      _fetchPost(_searchId);
+    }
+  }
+
   // Refresh method for pull-to-refresh
   Future<void> _refreshPosts() async {
     setState(() {
@@ -90,6 +120,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   }
 
   void _filterPosts() {
+    _searchId = "";
     final query = _searchController.text;
     setState(() {
       if (query.isEmpty && _currentFilter == "all") {
@@ -107,6 +138,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
             if (uri.pathSegments.length >= 3 &&
                 uri.pathSegments[1] == 'status') {
               idToFilter = uri.pathSegments[2];
+              _searchId = idToFilter;
             }
           }
           matchesQuery =
@@ -118,22 +150,22 @@ class _OverviewScreenState extends State<OverviewScreen> {
 
         bool matchesFilter = true;
         switch (_currentFilter) {
-          case "replies":
+          case PostFilterOption.replies:
             matchesFilter = post.type == 'reply';
             break;
-          case "quotes":
+          case PostFilterOption.quotes:
             matchesFilter = post.type == 'quote';
             break;
-          case "posts":
+          case PostFilterOption.posts:
             matchesFilter = post.type == 'post';
             break;
-          case "reposts":
+          case PostFilterOption.reposts:
             matchesFilter = post.type == 'repost';
             break;
-          case "tech, posted":
+          case PostFilterOption.techPosted:
             matchesFilter = post.isTech == true && post.isPosted == true;
             break;
-          case "tech, not posted":
+          case PostFilterOption.techNotPosted:
             matchesFilter = post.isTech == true && post.isPosted == false;
             break;
           default:
@@ -157,17 +189,26 @@ class _OverviewScreenState extends State<OverviewScreen> {
               _filterPosts();
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(
+            height: PaddingSizes.small,
+          ),
           TextSearch(
             controller: _searchController,
             onChanged: (_) => _filterPosts(),
           ),
+          if (!_isLoading && _filteredPosts.isEmpty)
+            OutlinedButton(
+              onPressed: _searchId.isNotEmpty ? _searchForSpecificPost : null,
+              child: Text("Search for post with ID: $_searchId"),
+            ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: _refreshPosts,
               child: Material(
                 child: ListView.builder(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(
+                    PaddingSizes.small,
+                  ),
                   controller: _scrollController,
                   itemCount: _filteredPosts.length + (_isLoading ? 1 : 0),
                   itemBuilder: (context, index) {

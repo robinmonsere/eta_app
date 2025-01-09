@@ -1,3 +1,4 @@
+import 'package:eta_app/src/core/enums/filters.dart';
 import 'package:eta_app/src/core/models/post.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:postgres/postgres.dart';
@@ -32,6 +33,49 @@ class DatabaseService {
         'isTech': isTech,
       },
     );
+  }
+
+  Future<int> getPostCount(StatisticsFilter filter, {bool? isTech}) async {
+    String timeCondition;
+    switch (filter) {
+      case StatisticsFilter.today:
+        timeCondition = "created_at >= NOW() - INTERVAL '1 day'";
+        break;
+      case StatisticsFilter.sevenDays:
+        timeCondition = "created_at >= NOW() - INTERVAL '7 days'";
+        break;
+      case StatisticsFilter.twoWeeks:
+        timeCondition = "created_at >= NOW() - INTERVAL '14 days'";
+        break;
+      case StatisticsFilter.oneMonth:
+        timeCondition = "created_at >= NOW() - INTERVAL '1 month'";
+        break;
+      case StatisticsFilter.all:
+      default:
+        timeCondition = "";
+    }
+    String techCondition =
+        isTech != null ? "is_tech = ${isTech ? 'TRUE' : 'FALSE'}" : "";
+    String condition = [timeCondition, techCondition]
+        .where((c) => c.isNotEmpty) // Exclude empty conditions
+        .join(" AND ");
+    condition = condition.isNotEmpty ? "WHERE $condition" : "";
+
+    final query = 'SELECT COUNT(*) FROM posts $condition';
+    final result = await _connection.execute(Sql(query));
+
+    return (result[0][0] as int);
+  }
+
+  Future<List<Post>> fetchPost(String id) async {
+    final result = await _connection.execute(
+        Sql.named('SELECT * from posts WHERE post_id = @post_id'),
+        parameters: {
+          'post_id': id,
+        });
+    return result.map((row) {
+      return Post.fromMap(row.toColumnMap());
+    }).toList();
   }
 
   Future<List<Post>> fetchPosts({
